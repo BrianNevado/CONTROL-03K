@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080f1d">
+  <title>CONTROL 03K | Gestión financiera</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="CONTROL 03K">
+      <span class="brand-logo">03K</span>
+      <span><strong>CONTROL 03K</strong><small>Administración del grupo</small></span>
+    </a>
+    <div class="topbar-right">
+      <span class="connection-status"><i class="status-dot"></i><span id="connection-label">Conectando...</span></span>
+      <button id="logout-button" class="button secondary small" hidden>Cerrar sesión</button>
+    </div>
+  </header>
+
+  <section class="auth-wrap" id="auth-screen">
+    <div class="auth-card">
+      <span class="eyebrow">ACCESO SEGURO · CONTROL 03K</span>
+      <h1>Bienvenido</h1>
+      <p class="muted">Inicia sesión o solicita acceso. Las cuentas nuevas necesitan la aprobación del administrador.</p>
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="show-login">Iniciar sesión</button>
+        <button type="button" class="auth-tab" id="show-signup">Crear cuenta</button>
+      </div>
+      <form id="login-form" class="form-stack">
+        <label for="login-email">Correo electrónico</label>
+        <input id="login-email" type="email" autocomplete="email" required placeholder="tu@correo.com">
+        <label for="login-password">Contraseña</label>
+        <input id="login-password" type="password" autocomplete="current-password" required>
+        <button class="button primary full" type="submit">Entrar</button>
+      </form>
+      <form id="signup-form" class="form-stack" hidden>
+        <label for="signup-name">Nombre completo</label>
+        <input id="signup-name" maxlength="70" required placeholder="Nombre y apellido">
+        <label for="signup-email">Correo electrónico</label>
+        <input id="signup-email" type="email" autocomplete="email" required placeholder="tu@correo.com">
+        <label for="signup-password">Crea una contraseña</label>
+        <input id="signup-password" type="password" minlength="6" autocomplete="new-password" required>
+        <button class="button primary full" type="submit">Solicitar acceso</button>
+      </form>
+      <p id="auth-message" class="message" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="state-wrap" id="waiting-screen" hidden>
+    <div class="auth-card state-card"><span class="eyebrow">SOLICITUD RECIBIDA</span><h1>Tu cuenta está pendiente</h1><p class="muted">El administrador debe aprobar tu acceso antes de que puedas consultar la información de CONTROL 03K.</p><button id="waiting-logout" class="button secondary">Cerrar sesión</button></div>
+  </section>
+  <section class="state-wrap" id="rejected-screen" hidden>
+    <div class="auth-card state-card"><span class="eyebrow">CONTROL DE ACCESO</span><h1>Acceso no autorizado</h1><p class="muted">Tu solicitud no fue aprobada. Comunícate con Brian si crees que se trata de un error.</p><button id="rejected-logout" class="button secondary">Cerrar sesión</button></div>
+  </section>
+
+  <main id="app-screen" class="app-shell" hidden>
+    <section class="welcome-row">
+      <div><span class="eyebrow">GESTIÓN FINANCIERA · 03K</span><h1 id="welcome-title">Bienvenido</h1><p class="muted">Controla las actividades, integrantes, aportes y gastos del grupo.</p></div>
+      <div class="role-chip" id="role-chip">Usuario aprobado</div>
+    </section>
+
+    <section class="approval-panel panel" id="approval-section" hidden>
+      <div class="section-head"><div><span class="eyebrow">ADMINISTRACIÓN</span><h2>Solicitudes de acceso</h2><p class="muted">Aprueba o rechaza las cuentas nuevas.</p></div><button id="refresh-approvals" class="button secondary">Actualizar</button></div>
+      <div id="pending-users" class="pending-list"></div>
+    </section>
+
+    <nav class="tabs" aria-label="Secciones principales">
+      <button class="tab active" data-tab="dashboard">Resumen</button>
+      <button class="tab" data-tab="members">Integrantes</button>
+      <button class="tab" data-tab="activities">Actividades</button>
+      <button class="tab" data-tab="movements">Movimientos</button>
+    </nav>
+
+    <section class="tab-panel active" id="tab-dashboard">
+      <div class="section-head"><div><span class="eyebrow">VISTA GENERAL</span><h2>Resumen financiero</h2><p class="muted">Los importes se calculan con los movimientos guardados en Supabase.</p></div><select id="dashboard-activity" aria-label="Actividad del resumen"></select></div>
+      <div class="stats-grid">
+        <article class="stat-card"><span>Presupuesto</span><strong id="stat-budget">S/ 0.00</strong></article>
+        <article class="stat-card"><span>Total recaudado</span><strong id="stat-income">S/ 0.00</strong></article>
+        <article class="stat-card"><span>Total de gastos</span><strong id="stat-expenses">S/ 0.00</strong></article>
+        <article class="stat-card"><span>Saldo disponible</span><strong id="stat-balance">S/ 0.00</strong></article>
+      </div>
+      <div class="two-columns">
+        <article class="panel"><div class="section-head"><div><h3>Actividad seleccionada</h3><p class="muted" id="dashboard-activity-date">Selecciona una actividad.</p></div><span class="tag" id="dashboard-activity-tag">Sin actividad</span></div><h2 id="dashboard-activity-name">Aún no hay actividades</h2><p class="muted" id="dashboard-activity-description">Cuando registres una actividad, sus datos aparecerán aquí.</p></article>
+        <article class="panel"><div class="section-head"><div><h3>Estado de integrantes</h3><p class="muted">Participantes de la actividad seleccionada.</p></div></div><div class="mini-stats"><div><strong id="stat-members">0</strong><span>Participantes</span></div><div><strong id="stat-paid">0</strong><span>Con aportes</span></div><div><strong id="stat-pending">0</strong><span>Sin aportes</span></div></div></article>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="tab-members" hidden>
+      <div class="section-head"><div><span class="eyebrow">GRUPO</span><h2>Integrantes</h2><p class="muted">Directorio general del grupo.</p></div><button id="add-member" class="button primary admin-only">+ Añadir integrante</button></div>
+      <div class="toolbar"><input id="member-search" type="search" placeholder="Buscar integrante..."><select id="member-filter"><option value="all">Todos</option><option value="active">Activos</option><option value="inactive">Inactivos</option></select></div>
+      <div class="table-wrap"><table><thead><tr><th>Integrante</th><th>Estado</th><th>Registrado</th><th class="admin-only">Acciones</th></tr></thead><tbody id="members-list"></tbody></table></div>
+    </section>
+
+    <section class="tab-panel" id="tab-activities" hidden>
+      <div class="section-head"><div><span class="eyebrow">ORGANIZACIÓN</span><h2>Actividades</h2><p class="muted">Cada actividad puede tener su propio presupuesto y participantes.</p></div><button id="add-activity" class="button primary admin-only">+ Nueva actividad</button></div>
+      <div id="activities-list" class="activity-grid"></div>
+      <section id="activity-detail-inline" class="activity-detail-inline" hidden aria-live="polite"></section>
+    </section>
+
+    <section class="tab-panel" id="tab-movements" hidden>
+      <div class="section-head"><div><span class="eyebrow">REGISTRO FINANCIERO</span><h2>Movimientos</h2><p class="muted">Consulta aportes y gastos registrados.</p></div><button id="add-movement" class="button primary admin-only">+ Registrar movimiento</button></div>
+      <div class="toolbar"><select id="movement-activity-filter"><option value="all">Todas las actividades</option></select><select id="movement-type-filter"><option value="all">Aportes y gastos</option><option value="aporte">Solo aportes</option><option value="gasto">Solo gastos</option></select></div>
+      <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Actividad</th><th>Integrante</th><th>Tipo</th><th>Concepto</th><th>Monto</th><th class="admin-only">Acciones</th></tr></thead><tbody id="movements-list"></tbody></table></div>
+    </section>
+    <p id="app-message" class="message app-message" role="status" aria-live="polite"></p>
+  </main>
+
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <section class="modal" id="modal-window" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="section-head"><div><span class="eyebrow">CONTROL 03K</span><h2 id="modal-title">Formulario</h2></div><button id="modal-close" class="close-button" aria-label="Cerrar">×</button></div>
+      <form id="modal-form" class="form-stack"></form>
+    </section>
+  </div>
+  <footer>CONTROL 03K · Sistema de administración</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

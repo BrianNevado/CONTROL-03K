@@ -1,0 +1,20 @@
+CONTROL 03K - actualización de actividades, cuotas y pagos
+
+ANTES DE PROBAR LA NUEVA VERSION:
+1. Entra a tu proyecto de Supabase.
+2. Abre SQL Editor > New query.
+3. Abre el archivo supabase_aportes_actividad.sql, copia todo su contenido y ejecútalo en Supabase.
+4. Reemplaza los archivos anteriores de CONTROL 03K por los de esta carpeta. Conserva config.js con tu URL y publishable key actuales.
+5. Abre index.html e inicia sesión con tu cuenta administradora.
+6. En Actividades, pulsa Ver detalle. La información se desplegará debajo de las tarjetas, dentro de la misma página (ya no como ventana flotante), para administrar integrantes, montos asignados, pagos parciales, gastos e historial.
+
+FUNCIONAMIENTO:
+- El administrador puede crear/editar actividades, añadir o retirar integrantes, asignar el monto que debe aportar cada persona, registrar varios pagos parciales, editar o eliminar movimientos y registrar gastos.
+- Los usuarios aprobados solo pueden consultar las actividades, los integrantes, los aportes y el historial.
+- Los estados Pendiente, Pago parcial y Pagado se calculan automáticamente comparando el total pagado con el monto asignado.
+- Los pagos se guardan como movimientos separados en la tabla movimientos.
+
+IMPORTANTE:
+- La nueva tabla aportes_esperados guarda el monto que debe aportar cada integrante en cada actividad.
+- Los pagos anteriores que ya estén registrados en movimientos se seguirán sumando. Para que se muestre un estado correcto, asigna el monto esperado a cada participante.
+- Nunca coloques una clave service_role en config.js ni en GitHub. Usa solo la publishable key.
